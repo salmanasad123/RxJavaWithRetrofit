@@ -18,6 +18,8 @@ import com.example.teamas.loginfunctionality.Login.utils.AppStrings;
 import com.example.teamas.loginfunctionality.R;
 import com.google.gson.JsonObject;
 
+import java.util.Observable;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, SignInContract.View {
 
     private EditText email;

@@ -1,7 +1,8 @@
 package com.example.teamas.loginfunctionality.Login.mainContracts.presenters;
 
 import android.content.Context;
-import android.util.Log;
+import android.view.ContextMenu;
+
 
 import com.example.teamas.loginfunctionality.Login.mainContracts.SignInContract;
 import com.example.teamas.loginfunctionality.Login.pojo.SignIn.SignInResponse;
@@ -11,11 +12,13 @@ import com.example.teamas.loginfunctionality.Login.utils.NetworkReachability;
 import com.example.teamas.loginfunctionality.Login.utils.constants.AppNumerics;
 import com.google.gson.JsonObject;
 
-import java.util.Observable;
+import org.reactivestreams.Subscription;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
@@ -26,6 +29,8 @@ public class SignInPresenter implements SignInContract.Presenter {
     private RetrofitApiInterface retrofit;
     private Context context;
     private SignInContract.View view;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
 
     public SignInPresenter(Context context, SignInContract.View view) {
         this.context = context;
@@ -42,7 +47,7 @@ public class SignInPresenter implements SignInContract.Presenter {
                     .subscribe(new Observer<SignInResponse>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-
+                            compositeDisposable.add(d);
                         }
 
                         @Override
@@ -68,13 +73,14 @@ public class SignInPresenter implements SignInContract.Presenter {
                                 case AppNumerics.serverUnavailable:
                                     break;
                             }
-                            e.printStackTrace();
                         }
 
                         @Override
                         public void onComplete() {
-
+                            compositeDisposable.dispose();
                         }
+
+
                     });
 
         } else {
